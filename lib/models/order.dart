@@ -138,23 +138,45 @@ class Payment {
 }
 
 class Foods {
-  String? food;
+  FoodOfOrder? food;
   int? quantity;
   String? sId;
 
   Foods({this.food, this.quantity, this.sId});
 
   Foods.fromJson(Map<String, dynamic> json) {
-    food = json['food'];
+    food = json['food'] != null ? FoodOfOrder.fromJson(json['food']) : null;
     quantity = json['quantity'];
     sId = json['_id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['food'] = food;
+    data['food'] = food?.toJson();
     data['quantity'] = quantity;
     data['_id'] = sId;
+    return data;
+  }
+}
+
+class FoodOfOrder{
+  String? id;
+  String? name;
+  String? rating;
+
+  FoodOfOrder({this.id, this.name, this.rating});
+
+  FoodOfOrder.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    rating = json['rating'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['rating'] = rating;
     return data;
   }
 }

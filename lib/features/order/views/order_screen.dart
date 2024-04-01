@@ -1,3 +1,5 @@
+import 'package:ddnangcao_project/features/order/views/confirmed_screen.dart';
+import 'package:ddnangcao_project/features/order/views/new_order_screen.dart';
 import 'package:ddnangcao_project/features/order/views/scheduled_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/color_lib.dart';
@@ -26,7 +28,7 @@ class _OrderScreenState extends State<OrderScreen> {
             indicatorWeight: 5,
             tabs: [
               RepeatedTab(
-                label: "Scheduled",
+                label: "Schedule",
               ),
               RepeatedTab(
                 label: "Confirmed",
@@ -35,7 +37,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 label: "New",
               ),
               RepeatedTab(
-                label: "History",
+                label: "Out going",
               ),
             ],
           ),
@@ -43,12 +45,8 @@ class _OrderScreenState extends State<OrderScreen> {
         body: const TabBarView(
           children: [
             ScheduledScreen(),
-            Center(
-              child: Text("Women"),
-            ),
-            Center(
-              child: Text("Shoes"),
-            ),
+            ConfirmedScreen(),
+            NewOrderScreen(),
             Center(
               child: Text("Shoes"),
             ),

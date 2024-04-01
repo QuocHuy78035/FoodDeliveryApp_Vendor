@@ -1,27 +1,32 @@
+import 'package:ddnangcao_project/providers/order_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import '../../../models/order.dart';
 import '../../../utils/color_lib.dart';
 import '../../../utils/size_lib.dart';
 
 class DetailOrderScreen extends StatefulWidget {
   final String userName;
   final String avt;
-  final List<String> foodName;
+  final List<Foods> foods;
   final String subTotal;
   final String distance;
   final String id;
   final List<int> quantity;
+  final int index;
 
   const DetailOrderScreen({
     Key? key,
     required this.userName,
+    required this.foods,
     required this.avt,
-    required this.foodName,
     required this.subTotal,
     required this.distance,
     required this.quantity,
     required this.id,
+    required this.index
   }) : super(key: key);
 
   @override
@@ -76,6 +81,7 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.id);
     final int subTotal = int.parse(widget.subTotal);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -153,12 +159,12 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                     height: height,
                     width: GetSize.getWidth(context),
                     child: ListView.builder(
-                      itemCount: widget.foodName.length,
+                      itemCount: widget.foods.length,
                       itemBuilder: (context, index) {
                         return FoodCost(
                           cost: 1,
                             quantity: widget.quantity[index],
-                            name: widget.foodName[index]);
+                            name: widget.foods[index].food?.name ?? "");
                       },
                     ),
                   ),
@@ -300,7 +306,8 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                 ),
                 const SizedBox(width: 30),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    await Provider.of<OrderProvider>(context, listen: false).changeStatusToConfirmed(widget.id, "confirmed", widget.index);
                     Navigator.pop(context);
                   },
                   child: Container(

@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'features/auth/views/merchant_auth/forgot_pass_screen.dart';
+import 'features/auth/views/merchant_auth/login_screen.dart';
 import 'features/auth/views/merchant_auth/splash_screen.dart';
+import 'features/main/views/navbar_custom.dart';
 import 'firebase_options.dart';
 
 void main() async{
@@ -55,8 +57,7 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      //home: Provider.of<UserProvider>(context).user.accessToken != ""  ? CustomerHomeScreen() : LoginScreen(),
-      home: MyHomePage(),
+      home: Provider.of<UserProvider>(context).user.accessToken != ""  ? CustomerHomeScreen() : LoginScreen(),
     );
   }
 }

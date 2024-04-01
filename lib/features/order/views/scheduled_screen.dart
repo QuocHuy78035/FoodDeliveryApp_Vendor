@@ -1,4 +1,3 @@
-import 'package:ddnangcao_project/features/order/controllers/order_controller.dart';
 import 'package:ddnangcao_project/features/order/views/detail_order_screen.dart';
 import 'package:ddnangcao_project/providers/order_provider.dart';
 import 'package:ddnangcao_project/utils/size_lib.dart';
@@ -15,12 +14,11 @@ class ScheduledScreen extends StatefulWidget {
 }
 
 class _ScheduledScreenState extends State<ScheduledScreen> {
-  final OrderController orderController = OrderController();
 
   @override
   void initState() {
     super.initState();
-    Provider.of<OrderProvider>(context, listen: false).getAllOrder();
+    Provider.of<OrderProvider>(context, listen: false).getAllOrderPending();
   }
 
   @override
@@ -52,11 +50,10 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return DetailOrderScreen(
+                                  index: index,
+                                  foods: value.listOrderScheduled[index].foods ?? [],
                                   avt: "",
                                   userName: value.listOrderScheduled[index].user?.userName ?? "",
-                                  foodName: value.listOrderScheduled[index].foods
-                                      !.map((food) => food.food as String)
-                                      .toList(),
                                   subTotal: "${value.listOrderScheduled[index].checkout
                                       ?.totalApplyDiscount}",
                                   distance: value.listOrderScheduled[index].distance ?? "",

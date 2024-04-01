@@ -10,7 +10,7 @@ abstract class ApiService {
   postFormData({required String url, required Map<String, dynamic> params});
   delete({required String url});
   put();
-  patch({required String url});
+  patch({required String url, required Map<String, dynamic> params,});
 }
 
 class ApiServiceImpl extends ApiService {
@@ -101,7 +101,7 @@ class ApiServiceImpl extends ApiService {
 
 
   @override
-  patch({required String url}) async{
+  patch({required String url, required Map<String, dynamic> params}) async{
     final String token = await getNewToken();
     final SharedPreferences sharedPreferences =
     await SharedPreferences.getInstance();
@@ -113,6 +113,9 @@ class ApiServiceImpl extends ApiService {
         'authorization': token,
         'x-client-id': userId ?? "",
       },
+      body: jsonEncode(
+        params,
+      ),
     );
   }
 
