@@ -1,12 +1,16 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:csc_picker/csc_picker.dart';
+import 'package:ddnangcao_project/features/auth/controllers/auth_controller.dart';
 import 'package:ddnangcao_project/widgets/base_input.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../utils/color_lib.dart';
+
 class RegisterStoreScreen extends StatefulWidget {
-  const RegisterStoreScreen({super.key});
+  final String email;
+  const RegisterStoreScreen({super.key, required this.email});
 
   @override
   State<RegisterStoreScreen> createState() => _RegisterStoreScreenState();
@@ -28,7 +32,7 @@ class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
   _selectCameraImage() async {
     final ImagePicker _imagePicker = ImagePicker();
 
-    final im = await _imagePicker.pickImage(source: ImageSource.gallery);
+    final im = await _imagePicker.pickImage(source: ImageSource.camera);
     if (im != null) {
       setState(() {
         _image = File(im.path);
@@ -71,13 +75,13 @@ class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
                   background: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.yellow.shade900, Colors.yellow],
+                        colors: [ColorLib.primaryColor, Colors.yellow.shade900],
                       ),
                     ),
                     child: Center(
                       child: Container(
-                        height: 90,
-                        width: 90,
+                        height: 120,
+                        width: 120,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(
@@ -117,16 +121,6 @@ class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  // TextFieldCustom(
-                  //   onChanged: (value) {
-                  //     email = value;
-                  //   },
-                  //   hintText: 'Email Address',
-                  //   type: TextInputType.emailAddress,
-                  // ),
-                  // const SizedBox(
-                  //   height: 10,
-                  // ),
                   BaseInput(
                     onChanged: (value) {
                       phoneNumber = value;
@@ -137,12 +131,8 @@ class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-
                   CSCPicker(
-                    ///Enable disable state dropdown [OPTIONAL PARAMETER]
                     showStates: true,
-
-                    /// Enable disable city drop down [OPTIONAL PARAMETER]
                     showCities: true,
 
                     ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
@@ -267,63 +257,21 @@ class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
                   //       });
                   //     },
                   //   ),
-                  // ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Tax Registered?',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Flexible(
-                        child: SizedBox(
-                          width: 150,
-                          child: DropdownButtonFormField<String>(
-                            hint: const Text('Select'),
-                            items: _taxOption
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                _taxStatus = value;
-                              });
-                            },
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  _taxStatus == 'Yes'
-                      ? BaseInput(
-                          onChanged: (value) {
-                            taxNumber = value;
-                          },
-                          hintText: 'Tax Number',
-                          type: 'string',
-                        )
-                      : Container(),
+                  // )
                   const SizedBox(
                     height: 30,
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async{
+                        AuthController auth = AuthController();
+                        await auth.registerStore("storeName", "address", _image, "timeOpen", "timeClose", "", "");
                         //_registerStoreVendor();
                         //FirebaseAuth.instance.signOut();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: ColorLib.primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             10,

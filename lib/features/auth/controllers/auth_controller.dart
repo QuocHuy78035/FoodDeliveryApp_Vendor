@@ -1,14 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ddnangcao_project/providers/user_provider.dart';
+import 'package:ddnangcao_project/utils/global_variable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as https;
 import '../../../api_services.dart';
+import '../../../providers/user_provider.dart';
 import 'i_auth.dart';
 
 class AuthController implements IAuth {
@@ -57,7 +58,8 @@ class AuthController implements IAuth {
           "name": name,
           "email": email,
           "password": password,
-          "passwordConfirm": passwordConfirm
+          "passwordConfirm": passwordConfirm,
+          "role": "vendor"
         },
         needTokenAndUserId: false);
 
@@ -204,8 +206,37 @@ class AuthController implements IAuth {
   }
 
   @override
-  Future<String> registerStore(String storeName, String email, String phoneNumber, String stateValue, String cityVale, File? image) {
-    // TODO: implement registerStore
-    throw UnimplementedError();
+  Future<String> registerStore(
+    String storeName,
+    String address,
+    File? image,
+    String timeOpen,
+    String timeClose,
+    String latitude,
+      String longtitude,
+  ) async {
+    String message;
+    var stream = https.ByteStream(image!.openRead());
+    var length = await image.length();
+    stream.cast();
+    var request = https.MultipartRequest(
+        "POST", Uri.parse("http://localhost:8000/api/v1/store"));
+    request.fields['name'] = storeName;
+    request.fields['address'] = address;
+    var multipart = https.MultipartFile('image', stream, length);
+    request.files.add(multipart);
+    request.fields['time_open'] = timeOpen;
+    request.fields['time_close'] = timeClose;
+    request.fields['longtitude'] = longtitude;
+    request.fields['latitude'] = latitude;
+    var response = await request.send();
+    var body = await https.Response.fromStream(response);
+
+    print(body.body);
+    if(response.statusCode == 200){
+      print("Create store success");
+      message = "Success";
+    }
+    return "Success";
   }
 }
