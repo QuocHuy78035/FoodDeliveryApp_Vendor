@@ -12,6 +12,7 @@ import '../../controllers/auth_controller.dart';
 import '../../widgets/facebook_button.dart';
 import '../../widgets/google_button.dart';
 import '../../widgets/text_navigator.dart';
+import '../store_auth/register_store_screen.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -43,7 +44,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => VerifySignUpScreen(email: email, pass: password,),
+            //builder: (context) => VerifySignUpScreen(email: email, pass: password,),
+            builder: (context) => RegisterStoreScreen(email: email,)
           ),
         );
       }else {

@@ -1,27 +1,23 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:ddnangcao_project/utils/global_variable.dart';
 import 'package:http/http.dart' as https;
+import 'package:http_parser/http_parser.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class ApiService {
   get({required String url});
   post({required String url, required Map<String, dynamic> params});
-  postFormData({required String url, required Map<String, dynamic> params});
   delete({required String url});
   put();
   patch({required String url, required Map<String, dynamic> params,});
+  postFormData({required String url, required Map<String, dynamic> params,required String nameFieldImage});
+  patchFormData({required String url, required Map<String, dynamic> params,required String nameFieldImage});
 }
 
 class ApiServiceImpl extends ApiService {
-
-  @override
-  postFormData({required String url, required Map<String, dynamic> params}) async {
-    final SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
-    String token = await getNewToken();
-    String? userId= sharedPreferences.getString("userId");
-  }
+  
 
   @override
   post(
@@ -164,6 +160,76 @@ class ApiServiceImpl extends ApiService {
 
   bool isTokenExpired(String token) {
     return JwtDecoder.isExpired(token);
+  }
+
+  @override
+  patchFormData({required String url, required Map<String, dynamic> params, required String nameFieldImage}) async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    String token = await getNewToken();
+    String? userId = sharedPreferences.getString("userId");
+
+    var headers = {
+      'Content-Type': 'multipart/form-data',
+      'authorization': token,
+      'x-client-id': userId ?? "",
+    };
+
+    var request = https.MultipartRequest(
+      "PATCH",
+      Uri.parse("${GlobalVariable.apiUrl}/$url"),
+    );
+
+    request.headers.addAll(headers);
+
+    params.forEach((key, value) async {
+      if (value is String) {
+        request.fields[key] = value;
+      } else if (value is File) {
+        var multipart = await https.MultipartFile.fromPath(nameFieldImage, value.path, contentType: MediaType.parse('image/jpeg'));
+        request.files.add(multipart);
+      }
+    });
+
+    var response = await request.send();
+    var body = await https.Response.fromStream(response);
+
+    return body;
+  }
+
+  @override
+  postFormData({required String url, required Map<String, dynamic> params, required String nameFieldImage}) async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    String token = await getNewToken();
+    String? userId = sharedPreferences.getString("userId");
+
+    var headers = {
+      'Content-Type': 'multipart/form-data',
+      'authorization': token,
+      'x-client-id': userId ?? "",
+    };
+
+    var request = https.MultipartRequest(
+      "POST",
+      Uri.parse("${GlobalVariable.apiUrl}/$url"),
+    );
+
+    request.headers.addAll(headers);
+
+    params.forEach((key, value) async {
+      if (value is String) {
+        request.fields[key] = value;
+      } else if (value is File) {
+        var multipart = await https.MultipartFile.fromPath(nameFieldImage, value.path, contentType: MediaType.parse('image/jpeg'));
+        request.files.add(multipart);
+      }
+    });
+
+    var response = await request.send();
+    var body = await https.Response.fromStream(response);
+
+    return body;
   }
 
 }

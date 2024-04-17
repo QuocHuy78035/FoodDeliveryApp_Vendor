@@ -1,15 +1,13 @@
 import 'package:ddnangcao_project/features/auth/controllers/auth_controller.dart';
-import 'package:ddnangcao_project/features/auth/views/store_auth/register_store_screen.dart';
+import 'package:ddnangcao_project/features/menu/views/add_food_screen.dart';
+import 'package:ddnangcao_project/providers/add_food_provider.dart';
+import 'package:ddnangcao_project/providers/category_provider.dart';
 import 'package:ddnangcao_project/providers/order_provider.dart';
 import 'package:ddnangcao_project/providers/user_provider.dart';
-import 'package:ddnangcao_project/test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'features/auth/views/merchant_auth/forgot_pass_screen.dart';
 import 'features/auth/views/merchant_auth/login_screen.dart';
-import 'features/auth/views/merchant_auth/splash_screen.dart';
 import 'features/main/views/navbar_custom.dart';
 import 'firebase_options.dart';
 
@@ -24,6 +22,12 @@ void main() async{
           ),
           ChangeNotifierProvider(
             create: (context) => OrderProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => CategoryProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => AddFoodProvider(),
           ),
         ],
         child: const MyApp(),
@@ -58,6 +62,7 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       home: Provider.of<UserProvider>(context).user.accessToken != ""  ? CustomerHomeScreen() : LoginScreen(),
+      //home: AddFoodScreen(),
     );
   }
 }
