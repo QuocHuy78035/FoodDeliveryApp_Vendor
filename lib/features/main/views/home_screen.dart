@@ -1,4 +1,4 @@
-import 'package:ddnangcao_project/utils/color_lib.dart';
+import 'package:ddnangcao_project/features/menu/views/all_food_screen.dart';
 import 'package:ddnangcao_project/utils/size_lib.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(),
+      //appBar: const MyAppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -21,7 +21,45 @@ class _HomeScreenState extends State<HomeScreen> {
                 horizontal: GetSize.symmetricPadding * 2),
             child: Column(
               children: [
-                Image.asset("assets/images/banners/Banner_vendor.png")
+                Image.asset("assets/images/banners/Banner_vendor.png"),
+                const SizedBox(
+                  height: 50,
+                ),
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        Image.asset(
+                          "assets/images/main/ic_order.png",
+                          height: 50,
+                        ),
+                        Text("Orders")
+                      ],
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AllFoodScreen(),
+                          ),
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            "assets/images/main/ic_menu.png",
+                            height: 60,
+                          ),
+                          Text("Menus")
+                        ],
+                      ),
+                    )
+                  ],
+                )
               ],
             ),
           ),
@@ -178,7 +216,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({super.key});
 
   @override
-  Size get preferredSize => const Size.fromHeight(100);
+  Size get preferredSize => const Size.fromHeight(130);
 
   @override
   Widget build(BuildContext context) {
@@ -226,39 +264,6 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           const SizedBox(
             height: 20,
-          ),
-          InkWell(
-            onTap: () {},
-            child: Container(
-              height: 35,
-              decoration: BoxDecoration(
-                border: Border.all(color: ColorLib.primaryColor),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(25),
-                ),
-              ),
-              child: const Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: GetSize.symmetricPadding),
-                    child: Icon(
-                      Icons.search,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "Search menu, food or drink",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
         ],
       ),
