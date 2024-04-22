@@ -2,10 +2,12 @@ import 'package:ddnangcao_project/features/auth/controllers/auth_controller.dart
 import 'package:ddnangcao_project/features/menu/views/add_food_screen.dart';
 import 'package:ddnangcao_project/providers/add_food_provider.dart';
 import 'package:ddnangcao_project/providers/category_provider.dart';
+import 'package:ddnangcao_project/providers/menu_provider.dart';
 import 'package:ddnangcao_project/providers/order_provider.dart';
 import 'package:ddnangcao_project/providers/user_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'features/auth/views/merchant_auth/login_screen.dart';
 import 'features/main/views/navbar_custom.dart';
@@ -28,6 +30,9 @@ void main() async{
           ),
           ChangeNotifierProvider(
             create: (context) => AddFoodProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => MenuProvider(),
           ),
         ],
         child: const MyApp(),
@@ -61,7 +66,8 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Provider.of<UserProvider>(context).user.accessToken != ""  ? CustomerHomeScreen() : LoginScreen(),
+      builder: EasyLoading.init(),
+        home: Provider.of<UserProvider>(context).user.accessToken != ""  ? CustomerHomeScreen() : LoginScreen(),
       //home: AddFoodScreen(),
     );
   }
