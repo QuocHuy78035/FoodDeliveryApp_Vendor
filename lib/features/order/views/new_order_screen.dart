@@ -50,6 +50,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return DetailOrderScreen(
+                                  address:  value.listOrderNewed[index].shippingAddress ?? "",
                                   index: index,
                                   foods: value.listOrderNewed[index].foods ?? [],
                                   avt: "",

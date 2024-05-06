@@ -10,24 +10,34 @@ import '../../../utils/size_lib.dart';
 class DetailOrderScreen extends StatefulWidget {
   final String userName;
   final String avt;
+  final String address;
   final List<Foods> foods;
   final String subTotal;
   final String distance;
   final String id;
   final List<int> quantity;
+  final String? note;
+  final int? foodCost;
   final int index;
+  final String? phone;
+  final bool? isPending;
 
-  const DetailOrderScreen({
-    Key? key,
-    required this.userName,
-    required this.foods,
-    required this.avt,
-    required this.subTotal,
-    required this.distance,
-    required this.quantity,
-    required this.id,
-    required this.index
-  }) : super(key: key);
+  const DetailOrderScreen(
+      {Key? key,
+      required this.userName,
+      required this.address,
+      required this.foods,
+      this.phone,
+      this.foodCost,
+      required this.avt,
+      required this.subTotal,
+      required this.distance,
+      required this.quantity,
+      required this.id,
+      this.note,
+        this.isPending = false,
+      required this.index})
+      : super(key: key);
 
   @override
   State<DetailOrderScreen> createState() => _DetailOrderScreenState();
@@ -81,7 +91,6 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.id);
     final int subTotal = int.parse(widget.subTotal);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -97,15 +106,15 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
               ),
               height: 40,
               color: ColorLib.thirdColor,
-              child: const Row(
+              child: Row(
                 children: [
-                  Text(
+                  const Text(
                     "Customer Note: ",
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                   Text(
-                    "Cutlery needed",
-                    style: TextStyle(color: ColorLib.primaryColor),
+                    widget.note ?? "Don't have",
+                    style: const TextStyle(color: ColorLib.primaryColor, fontSize: 18),
                   ),
                 ],
               ),
@@ -120,19 +129,28 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                 children: [
                   Row(
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         height: 50,
-                        child: CircleAvatar(
-                          child: Icon(Icons.person),
-                        ),
+                        child: Image.network(widget.avt),
                       ),
                       const SizedBox(
                         width: 10,
                       ),
-                      Text(
-                        widget.userName,
-                        style: const TextStyle(fontSize: 20),
-                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.userName,
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          Text(
+                            widget.phone ?? "",
+                            style: const TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                   const Icon(
@@ -153,6 +171,7 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                 horizontal: GetSize.symmetricPadding * 2,
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 30),
                   SizedBox(
@@ -162,13 +181,35 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                       itemCount: widget.foods.length,
                       itemBuilder: (context, index) {
                         return FoodCost(
-                          cost: 1,
+                            cost: widget.foodCost ?? 0,
                             quantity: widget.quantity[index],
                             name: widget.foods[index].food?.name ?? "");
                       },
                     ),
                   ),
                   const SizedBox(height: 40),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Shipping address",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        widget.address,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -200,8 +241,8 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                         ),
                       ),
                       Text(
-                          NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
-                              .format(commision),
+                        NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
+                            .format(commision),
                         style: const TextStyle(fontSize: 17),
                       ),
                     ],
@@ -213,7 +254,7 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                       Text(
                         "Merchant Receivable ($item items)",
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 17,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -277,7 +318,7 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
           ],
         ),
       ),
-      bottomSheet: BottomSheet(
+      bottomSheet: widget.isPending == true ? BottomSheet(
         onClosing: () {},
         builder: (BuildContext context) {
           return Container(
@@ -307,7 +348,9 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                 const SizedBox(width: 30),
                 GestureDetector(
                   onTap: () async {
-                    await Provider.of<OrderProvider>(context, listen: false).changeStatusToConfirmed(widget.id, "confirmed", widget.index);
+                    await Provider.of<OrderProvider>(context, listen: false)
+                        .changeStatusToConfirmed(
+                            widget.id, "confirmed", widget.index);
                     Navigator.pop(context);
                   },
                   child: Container(
@@ -328,7 +371,7 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
             ),
           );
         },
-      ),
+      ) : null,
     );
   }
 }
@@ -355,8 +398,7 @@ class FoodCost extends StatelessWidget {
           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
         ),
         Text(
-        NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
-        .format(cost),
+          NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(cost),
           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
         ),
       ],

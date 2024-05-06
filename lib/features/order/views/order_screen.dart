@@ -20,7 +20,7 @@ class _OrderScreenState extends State<OrderScreen> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          title: const Text("My Order"),
+          title: const Text("Orders"),
           bottom: const TabBar(
             padding: EdgeInsets.symmetric(horizontal: 0),
             isScrollable: true,

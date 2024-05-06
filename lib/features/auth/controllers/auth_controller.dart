@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ddnangcao_project/models/user.dart';
 import 'package:ddnangcao_project/utils/global_variable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../api_services.dart';
+import '../../../providers/user_provider.dart';
 import 'i_auth.dart';
 
 class AuthController implements IAuth {
@@ -42,6 +45,8 @@ class AuthController implements IAuth {
       await prefs.setString("name", name);
       await prefs.setString("email", email);
       await prefs.setStringList("storeId", storeIds);
+      Provider.of<UserProvider>(context, listen: false)
+          .setUser(data['metadata']['user']);
     } else if(data['metadata']['user']['status'] == "pending"){
       resMessage = GlobalVariable.waitingAdminApprove;
       String accessToken = data['metadata']['tokens']['accessToken'].toString();
@@ -170,25 +175,25 @@ class AuthController implements IAuth {
 
   //chat
   //create new user
-  @override
-  Future<UserCredential> signUpWithEmailAndPass(String email, String password,
-      String userId) async {
-    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-    final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
-    try {
-      UserCredential userCredential = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      _fireStore.collection('users').doc(userCredential.user!.uid).set({
-        //'uid' : userCredential.user!.uid,
-        'uid': userId,
-        'email': email
-      });
-      return userCredential;
-    } on FirebaseException catch (e) {
-      throw Exception(e.code);
-    }
-  }
+  // @override
+  // Future<UserCredential> signUpWithEmailAndPass(String email, String password,
+  //     String userId) async {
+  //   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  //   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+  //   try {
+  //     UserCredential userCredential = await _firebaseAuth
+  //         .createUserWithEmailAndPassword(email: email, password: password);
+  //
+  //     _fireStore.collection('users').doc(userCredential.user!.uid).set({
+  //       //'uid' : userCredential.user!.uid,
+  //       'uid': userId,
+  //       'email': email
+  //     });
+  //     return userCredential;
+  //   } on FirebaseException catch (e) {
+  //     throw Exception(e.code);
+  //   }
+  // }
 
   @override
   Future<UserCredential> signInWithEmailAndPass(String email,

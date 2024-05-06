@@ -2,6 +2,7 @@ import 'package:ddnangcao_project/features/order/views/order_screen.dart';
 import 'package:ddnangcao_project/features/profile/views/profile_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/color_lib.dart';
+import '../../restaurants/views/all_store_screen.dart';
 import 'home_screen.dart';
 
 class CustomerHomeScreen extends StatefulWidget {
@@ -15,7 +16,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   int _selectedIndex = 0;
   final List<Widget> _tabs = [
     const HomeScreen(),
-    const OrderScreen(),
+    const AllStoreScreen(),
     const ProfileScreen()
   ];
 

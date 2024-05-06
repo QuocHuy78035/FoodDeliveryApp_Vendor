@@ -2,9 +2,12 @@ import 'package:ddnangcao_project/providers/add_food_provider.dart';
 import 'package:ddnangcao_project/providers/category_provider.dart';
 import 'package:ddnangcao_project/providers/menu_provider.dart';
 import 'package:ddnangcao_project/providers/order_provider.dart';
+import 'package:ddnangcao_project/providers/restaurant_provider.dart';
+import 'package:ddnangcao_project/providers/user_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'features/auth/views/merchant_auth/login_screen.dart';
@@ -25,6 +28,12 @@ void main() async{
           ),
           ChangeNotifierProvider(
             create: (context) => AddFoodProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => RestaurantProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => UserProvider(),
           ),
           ChangeNotifierProvider(
             create: (context) => MenuProvider(),
@@ -58,7 +67,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return accessToken != '' ? MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -66,8 +75,16 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       builder: EasyLoading.init(),
-        home: accessToken != ""  ? CustomerHomeScreen() : LoginScreen(),
+        home: JwtDecoder.isExpired(accessToken) == false  ? const CustomerHomeScreen() : const LoginScreen() ,
       //home: RegisterStoreScreen(email: '',),
+    ) : MaterialApp(
+      home: Scaffold(
+        body: Container(
+          child: Center(
+            child: Text("Waiting"),
+          ),
+        ),
+      ),
     );
   }
 }

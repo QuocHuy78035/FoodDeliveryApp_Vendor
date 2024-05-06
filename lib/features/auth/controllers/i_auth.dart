@@ -12,8 +12,8 @@ abstract class IAuth{
   Future<String> resetPass(String password, String passwordConfirm, String token);
   Future<UserCredential> signInWithEmailAndPass(String email,
       String password);
-  Future<UserCredential> signUpWithEmailAndPass(String email,
-      String password, String userId);
+  // Future<UserCredential> signUpWithEmailAndPass(String email,
+  //     String password, String userId);
   Future<void> registerStore(String storeName, String address, File? image, String timeOpen, String timeClose, String latitude, String longtitude);
 
 }

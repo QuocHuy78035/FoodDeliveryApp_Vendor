@@ -3,7 +3,6 @@ import 'package:ddnangcao_project/providers/order_provider.dart';
 import 'package:ddnangcao_project/utils/size_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utils/color_lib.dart';
 import 'package:intl/intl.dart';
 
 import '../widgets/order_items.dart';
@@ -52,17 +51,22 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return DetailOrderScreen(
+                                  isPending: true,
+                                  address: value.listOrderScheduled[index].shippingAddress ?? "",
+                                  foodCost: value.listOrderScheduled[index].checkout?.totalPrice,
                                   index: index,
+                                  note: value.listOrderScheduled[index].note,
                                   foods: value.listOrderScheduled[index].foods ?? [],
-                                  avt: "",
+                                  avt: value.listOrderScheduled[index].user?.avt ?? "",
                                   userName: value.listOrderScheduled[index].user?.userName ?? "",
                                   subTotal: "${value.listOrderScheduled[index].checkout
-                                      ?.totalApplyDiscount}",
+                                      ?.total}",
                                   distance: value.listOrderScheduled[index].distance ?? "",
                                   id: value.listOrderScheduled[index].sId ?? "",
                                   quantity: value.listOrderScheduled[index].foods
                                   !.map((food) => food.quantity as int)
                                       .toList(),
+                                  phone: value.listOrderScheduled[index].phoneNumber,
                                 );
                               },
                             ),
@@ -76,7 +80,7 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
                           totalApplyDiscount:
                           NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
                               .format(value.listOrderScheduled[index].checkout
-                              ?.totalApplyDiscount),
+                              ?.total),
                           name:
                           value.listOrderScheduled[index].user?.userName ?? "",
                           pickUp: DateFormat.Hm().format(
