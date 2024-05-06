@@ -1,6 +1,8 @@
 import 'package:ddnangcao_project/features/auth/controllers/auth_controller.dart';
 import 'package:ddnangcao_project/features/auth/views/merchant_auth/forgot_pass_screen.dart';
 import 'package:ddnangcao_project/features/auth/views/merchant_auth/register_screen.dart';
+import 'package:ddnangcao_project/features/auth/views/merchant_auth/wait_admin_confirm_screen.dart';
+import 'package:ddnangcao_project/features/auth/views/store_auth/register_store_screen.dart';
 import 'package:ddnangcao_project/features/main/views/navbar_custom.dart';
 import 'package:ddnangcao_project/utils/snack_bar.dart';
 import 'package:ddnangcao_project/widgets/base_button.dart';
@@ -9,6 +11,7 @@ import 'package:ddnangcao_project/utils/color_lib.dart';
 import 'package:ddnangcao_project/utils/size_lib.dart';
 import 'package:ddnangcao_project/utils/validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../utils/global_variable.dart';
 import '../../widgets/facebook_button.dart';
 import '../../widgets/google_button.dart';
@@ -30,13 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
 
   login() async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     if (_formKey.currentState!.validate()) {
       setState(() {
         isLoading = true;
       });
-
-
-
       String message = await authController.loginUser(email, password, context);
 
       setState(() {
@@ -44,13 +45,31 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       if (message == GlobalVariable.loginSuc) {
         ShowSnackBar().showSnackBar(message, Colors.green, Colors.black, context);
-        Navigator.pushReplacement(
+        if(sharedPreferences.getStringList("storeId")!.isEmpty){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RegisterStoreScreen(email: ""),
+            ),
+          );
+        }
+        else{
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CustomerHomeScreen(),
+            ),
+          );
+        }
+      }else if(message == GlobalVariable.waitingAdminApprove){
+        Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const CustomerHomeScreen(),
+            builder: (context) => const WaitAdminConfirmScreen(),
           ),
         );
-      } else {
+      }
+      else {
         ShowSnackBar().showSnackBar(message, ColorLib.primaryColor, Colors.white, context);
       }
       //firebase

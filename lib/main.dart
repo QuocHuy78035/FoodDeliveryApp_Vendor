@@ -1,14 +1,12 @@
-import 'package:ddnangcao_project/features/auth/controllers/auth_controller.dart';
-import 'package:ddnangcao_project/features/menu/views/add_food_screen.dart';
 import 'package:ddnangcao_project/providers/add_food_provider.dart';
 import 'package:ddnangcao_project/providers/category_provider.dart';
 import 'package:ddnangcao_project/providers/menu_provider.dart';
 import 'package:ddnangcao_project/providers/order_provider.dart';
-import 'package:ddnangcao_project/providers/user_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'features/auth/views/merchant_auth/login_screen.dart';
 import 'features/main/views/navbar_custom.dart';
 import 'firebase_options.dart';
@@ -19,9 +17,6 @@ void main() async{
   runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(
-            create: (context) => UserProvider(),
-          ),
           ChangeNotifierProvider(
             create: (context) => OrderProvider(),
           ),
@@ -48,13 +43,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  String accessToken = '';
 
-  final AuthController authController = AuthController();
+  getUserData() async{
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    accessToken = sharedPreferences.getString("accessToken") ?? "";
+  }
 
   @override
   void initState(){
+    getUserData();
     super.initState();
-    authController.getUserData(context);
   }
 
   @override
@@ -67,8 +66,8 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       builder: EasyLoading.init(),
-        home: Provider.of<UserProvider>(context).user.accessToken != ""  ? CustomerHomeScreen() : LoginScreen(),
-      //home: AddFoodScreen(),
+        home: accessToken != ""  ? CustomerHomeScreen() : LoginScreen(),
+      //home: RegisterStoreScreen(email: '',),
     );
   }
 }

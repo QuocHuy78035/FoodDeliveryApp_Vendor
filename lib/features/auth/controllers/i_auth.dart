@@ -14,6 +14,6 @@ abstract class IAuth{
       String password);
   Future<UserCredential> signUpWithEmailAndPass(String email,
       String password, String userId);
-  Future<String> registerStore(String storeName, String address, File? image, String timeOpen, String timeClose, String latitude, String longtitude);
+  Future<void> registerStore(String storeName, String address, File? image, String timeOpen, String timeClose, String latitude, String longtitude);
 
 }

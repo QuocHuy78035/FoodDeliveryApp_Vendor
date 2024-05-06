@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../../../utils/color_lib.dart';
 import 'package:intl/intl.dart';
 
+import '../widgets/order_items.dart';
+
 class ConfirmedScreen extends StatefulWidget {
   const ConfirmedScreen({super.key});
 
@@ -44,29 +46,30 @@ class _ConfirmedScreenState extends State<ConfirmedScreen> {
                     itemCount: value.listOrderConfirmed.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return DetailOrderScreen(
-                                  index: index,
-                                  foods: value.listOrderConfirmed[index].foods ?? [],
-                                  avt: "",
-                                  userName: value.listOrderConfirmed[index].user?.userName ?? "",
-                                  subTotal: "${value.listOrderConfirmed[index].checkout
-                                      ?.totalApplyDiscount}",
-                                  distance: value.listOrderConfirmed[index].distance ?? "",
-                                  id: value.listOrderConfirmed[index].sId ?? "",
-                                  quantity: value.listOrderConfirmed[index].foods
-                                  !.map((food) => food.quantity as int)
-                                      .toList(),
-                                );
-                              },
-                            ),
-                          );
-                        },
+                        // onTap: () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) {
+                        //         return DetailOrderScreen(
+                        //           index: index,
+                        //           foods: value.listOrderConfirmed[index].foods ?? [],
+                        //           avt: "",
+                        //           userName: value.listOrderConfirmed[index].user?.userName ?? "",
+                        //           subTotal: "${value.listOrderConfirmed[index].checkout
+                        //               ?.totalApplyDiscount}",
+                        //           distance: value.listOrderConfirmed[index].distance ?? "",
+                        //           id: value.listOrderConfirmed[index].sId ?? "",
+                        //           quantity: value.listOrderConfirmed[index].foods
+                        //           !.map((food) => food.quantity as int)
+                        //               .toList(),
+                        //         );
+                        //       },
+                        //     ),
+                        //   );
+                        // },
                         child: OrderItem(
+                          status: "Waiting for shipper pickup",
                           dished: value.listOrderConfirmed[index].foods!.length,
                           totalApplyDiscount:
                           NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
@@ -74,6 +77,9 @@ class _ConfirmedScreenState extends State<ConfirmedScreen> {
                               ?.totalApplyDiscount),
                           name:
                           value.listOrderConfirmed[index].user?.userName ?? "",
+                          distance: value.listOrderConfirmed[index].distance ?? "",
+                          pickUp: value.listOrderConfirmed[index].updatedAt ?? "",
+                          createdAt: '',
 
                         ),
                       );
@@ -89,60 +95,3 @@ class _ConfirmedScreenState extends State<ConfirmedScreen> {
   }
 }
 
-class OrderItem extends StatelessWidget {
-  final String name;
-  final String totalApplyDiscount;
-  final int dished;
-  const OrderItem(
-      {super.key,
-        required this.name,
-        required this.totalApplyDiscount,
-        required this.dished});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black26.withOpacity(.05),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: GetSize.symmetricPadding * 2),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              name,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-            ),
-            const Divider(
-              color: Colors.black,
-            ),
-            const Row(
-              children: [
-                Text("Status: "),
-                Text("Waiting driver to confirm the order.", style: TextStyle(fontSize: 18, color: Colors.orange),)
-              ],
-            ),
-            Row(
-              children: [
-                Text("$dished dished"),
-                Text(
-                  totalApplyDiscount,
-                  style: const TextStyle(
-                      color: ColorLib.primaryColor, fontSize: 18),
-                )
-              ],
-            ),
-            Container(
-              height: 20,
-              width: GetSize.getWidth(context),
-              color: Colors.grey,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}

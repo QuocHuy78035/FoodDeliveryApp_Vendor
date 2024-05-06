@@ -33,7 +33,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.food_bank_outlined), label: "Restaurant"),
-          BottomNavigationBarItem(icon: Icon(Icons.food_bank_outlined), label: "Restaurant"),
+          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: "Account"),
         ],
         onTap: (index){
           setState(() {

@@ -1,4 +1,5 @@
 import 'package:ddnangcao_project/features/auth/controllers/auth_controller.dart';
+import 'package:ddnangcao_project/features/auth/views/merchant_auth/wait_admin_confirm_screen.dart';
 import 'package:ddnangcao_project/utils/global_variable.dart';
 import 'package:ddnangcao_project/utils/snack_bar.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import '../../../../utils/color_lib.dart';
 import '../../../../utils/size_lib.dart';
 import '../../../../widgets/base_button.dart';
 import '../../widgets/title_screen.dart';
-import 'login_screen.dart';
 
 class VerifySignUpScreen extends StatefulWidget {
   final String pass;
@@ -42,14 +42,15 @@ class _VerifySignUpScreenState extends State<VerifySignUpScreen> {
       });
       if (message == GlobalVariable.verifySignUpSuc) {
         //firebase
-        await authController.signUpWithEmailAndPass(widget.email, widget.pass, sharedPreferences.getString("userId") ?? "");
+        //await authController.signUpWithEmailAndPass(widget.email, widget.pass, sharedPreferences.getString("userId") ?? "");
 
         ShowSnackBar().showSnackBar(
             message, Colors.green, ColorLib.whiteColor, context);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const LoginScreen()
+            //builder: (context) => const LoginScreen()
+            builder: (context) => const WaitAdminConfirmScreen(),
           ),
         );
       } else {
