@@ -3,7 +3,6 @@ import 'package:ddnangcao_project/providers/order_provider.dart';
 import 'package:ddnangcao_project/utils/size_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utils/color_lib.dart';
 import 'package:intl/intl.dart';
 
 import '../widgets/order_items.dart';
@@ -46,35 +45,38 @@ class _ConfirmedScreenState extends State<ConfirmedScreen> {
                     itemCount: value.listOrderConfirmed.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        // onTap: () {
-                        //   Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) {
-                        //         return DetailOrderScreen(
-                        //           index: index,
-                        //           foods: value.listOrderConfirmed[index].foods ?? [],
-                        //           avt: "",
-                        //           userName: value.listOrderConfirmed[index].user?.userName ?? "",
-                        //           subTotal: "${value.listOrderConfirmed[index].checkout
-                        //               ?.totalApplyDiscount}",
-                        //           distance: value.listOrderConfirmed[index].distance ?? "",
-                        //           id: value.listOrderConfirmed[index].sId ?? "",
-                        //           quantity: value.listOrderConfirmed[index].foods
-                        //           !.map((food) => food.quantity as int)
-                        //               .toList(),
-                        //         );
-                        //       },
-                        //     ),
-                        //   );
-                        // },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return DetailOrderScreen(
+                                  index: index,
+                                  foodCost: value.listOrderConfirmed[index].checkout?.total,
+                                  phone: value.listOrderConfirmed[index].phoneNumber,
+                                  foods: value.listOrderConfirmed[index].foods ?? [],
+                                  avt: value.listOrderConfirmed[index].user?.avt ?? "",
+                                  note: value.listOrderConfirmed[index].note,
+                                  userName: value.listOrderConfirmed[index].user?.userName ?? "",
+                                  subTotal: "${value.listOrderConfirmed[index].checkout
+                                      ?.total}",
+                                  distance: value.listOrderConfirmed[index].distance ?? "",
+                                  id: value.listOrderConfirmed[index].sId ?? "",
+                                  quantity: value.listOrderConfirmed[index].foods
+                                  !.map((food) => food.quantity as int)
+                                      .toList(), address: value.listOrderConfirmed[index].shippingAddress ?? "",
+                                );
+                              },
+                            ),
+                          );
+                        },
                         child: OrderItem(
                           status: "Waiting for shipper pickup",
                           dished: value.listOrderConfirmed[index].foods!.length,
                           totalApplyDiscount:
                           NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
                               .format(value.listOrderConfirmed[index].checkout
-                              ?.totalApplyDiscount),
+                              ?.total),
                           name:
                           value.listOrderConfirmed[index].user?.userName ?? "",
                           distance: value.listOrderConfirmed[index].distance ?? "",
