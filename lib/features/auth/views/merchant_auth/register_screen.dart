@@ -12,7 +12,6 @@ import '../../controllers/auth_controller.dart';
 import '../../widgets/facebook_button.dart';
 import '../../widgets/google_button.dart';
 import '../../widgets/text_navigator.dart';
-import '../store_auth/register_store_screen.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -30,6 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late String email;
   late String password;
   late String passwordConfirm;
+  late String mobilePhone;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   registerUser() async {
@@ -44,8 +44,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            //builder: (context) => VerifySignUpScreen(email: email, pass: password,),
-            builder: (context) => RegisterStoreScreen(email: email,)
+            builder: (context) => VerifySignUpScreen(email: email, pass: password,),
+            //builder: (context) => RegisterStoreScreen(email: email,)
           ),
         );
       }else {
@@ -118,6 +118,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                     type: "Email",
                     hintText: "Your email",
+                  ),
+                  const Distance(
+                    height: GetSize.distance * 3,
+                  ),
+                  BaseInput(
+                    isNumberType: true,
+                    onChanged: (value) {
+                      mobilePhone = value;
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return GlobalVariable.enterPhone;
+                      }else if(value.length != 10){
+                        return GlobalVariable.enterPhoneVail;
+                      }
+                      return null;
+                    },
+                    type: "Mobile Phone",
+                    hintText: "Mobile Phone",
                   ),
                   const Distance(
                     height: GetSize.distance * 3,

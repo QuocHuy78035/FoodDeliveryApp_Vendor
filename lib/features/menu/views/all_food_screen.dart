@@ -36,8 +36,12 @@ class _AllFoodScreenState extends State<AllFoodScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const AddFoodScreen()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddFoodScreen(),
+                    ),
+                  );
                 },
                 child: const Icon(Icons.add)),
           )
@@ -124,7 +128,7 @@ class Food extends StatelessWidget {
   const Food(
       {super.key,
       required this.name,
-        required this.cateId,
+      required this.cateId,
       this.rating,
       required this.price,
       this.image,
@@ -139,19 +143,17 @@ class Food extends StatelessWidget {
         children: [
           SizedBox(
             width: 155,
-            height: 130,
+            height: 120,
             child: CachedNetworkImage(
               imageUrl: image ?? "",
               fit: BoxFit.fill,
               progressIndicatorBuilder: (context, url, downloadProgress) =>
                   Center(
-                    child: CircularProgressIndicator(value: downloadProgress.progress),
-                  ),
+                child:
+                    CircularProgressIndicator(value: downloadProgress.progress),
+              ),
               errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
-          ),
-          const SizedBox(
-            height: 10,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -162,7 +164,7 @@ class Food extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: 90,
+                      width: 80,
                       child: Text(
                         name,
                         overflow: TextOverflow.ellipsis,
@@ -184,8 +186,8 @@ class Food extends StatelessWidget {
                               builder: (context) => EditFoodScreen(
                                 cateId: cateId,
                                 foodName: name,
-                                  foodId: foodId,
-                                  price: price.toString(),
+                                foodId: foodId,
+                                price: price.toString(),
                                 left: left.toString(),
                                 image: image ?? "",
                               ),
@@ -209,17 +211,13 @@ class Food extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  "Price: ${NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
-                      .format(price)}",
+                  "Price: ${NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(price)}",
                   maxLines: 1,
                   style: const TextStyle(
                       overflow: TextOverflow.ellipsis,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: ColorLib.blackColor),
-                ),
-                const SizedBox(
-                  height: 10,
                 ),
                 Row(
                   children: [

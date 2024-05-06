@@ -1,12 +1,17 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:csc_picker/csc_picker.dart';
 import 'package:ddnangcao_project/features/auth/controllers/auth_controller.dart';
+import 'package:ddnangcao_project/features/main/views/home_screen.dart';
+import 'package:ddnangcao_project/utils/size_lib.dart';
 import 'package:ddnangcao_project/widgets/base_input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../utils/color_lib.dart';
+
 
 class RegisterStoreScreen extends StatefulWidget {
   final String email;
@@ -17,17 +22,71 @@ class RegisterStoreScreen extends StatefulWidget {
 }
 
 class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
-  String cityValue = '';
-  String countryValue = '';
-  String stateValue = '';
-  String businessName = '';
-  String email = '';
-  String phoneNumber = '';
-  String taxNumber = "1";
-
+  String name = "";
+  String address = "";
+  String timeOpen = "";
+  String timeClose = "";
   File? _image;
-  final List<String> _taxOption = ['Yes', 'No'];
-  String? _taxStatus;
+
+
+  Position? _currentLocation;
+  late bool servicePermission = true;
+  late LocationPermission permission;
+
+  String currentAddress = '';
+
+  Future<void> _getCurrentLocationAndAddress() async {
+    final SharedPreferences sharedPreferences =
+    await SharedPreferences.getInstance();
+    try {
+      _currentLocation = await _getCurrentLocation();
+      sharedPreferences.setDouble("latitude", _currentLocation!.latitude);
+      sharedPreferences.setDouble("longitude", _currentLocation!.longitude);
+      await _getAddress();
+    } catch (e) {
+      print("Error getting current location and address: $e");
+    }
+  }
+
+  Future<Position> _getCurrentLocation() async {
+    if (!servicePermission) {
+      print("Service disabled");
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<void> _getAddress() async {
+    try {
+      final SharedPreferences sharedPreferences =
+      await SharedPreferences.getInstance();
+      List<Placemark> placesmarks = await placemarkFromCoordinates(
+          _currentLocation!.latitude, _currentLocation!.longitude);
+      if (placesmarks.isNotEmpty) {
+        Placemark placemark = placesmarks[0];
+        if (mounted) {
+          setState(() {
+            currentAddress =
+            "${placemark.street}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea}, ${placemark.country}, ";
+          });
+          sharedPreferences.setString("address", currentAddress);
+        }
+      } else {
+        setState(() {
+          currentAddress = "Không thể tìm thấy địa chỉ.";
+        });
+      }
+    } catch (e) {
+      print("Error getting address: $e");
+      setState(() {
+        currentAddress = "Lỗi khi lấy địa chỉ.";
+      });
+    }
+  }
+
 
   _selectCameraImage() async {
     final ImagePicker _imagePicker = ImagePicker();
@@ -40,30 +99,25 @@ class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
     }
   }
 
-  // _registerStoreVendor() async {
-  //   EasyLoading.show(status: "PLEASE WAIT");
-  //   String res = await vendorController
-  //       .registerVendor(businessName, widget.email, phoneNumber, countryValue,
-  //       stateValue, cityValue, taxNumber, _taxStatus!, _image)
-  //       .whenComplete(() {
-  //     EasyLoading.dismiss();
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => const LandingScreen(),
-  //       ),
-  //     );
-  //   });
-  //   if (res == "Success") {
-  //     return showSnackBar(context, "Register store Success");
-  //   } else {
-  //     return showSnackBar(context, "Register store Fail");
-  //   }
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _initializeState();
+  }
+
+  Future<void> _initializeState() async {
+    try {
+      await _getCurrentLocationAndAddress();
+    } catch (e) {
+      print("Error initializing state: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    bool locationAvailable = _currentLocation != null && currentAddress.isNotEmpty;
+
+    return locationAvailable == true ? Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -90,15 +144,15 @@ class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
                         ),
                         child: _image != null
                             ? Image.memory(
-                                _image?.readAsBytesSync() as Uint8List,
-                                fit: BoxFit.cover,
-                              )
+                          _image?.readAsBytesSync() as Uint8List,
+                          fit: BoxFit.cover,
+                        )
                             : IconButton(
-                                icon: const Icon(Icons.image),
-                                onPressed: () {
-                                  _selectCameraImage();
-                                },
-                              ),
+                          icon: const Icon(Icons.image),
+                          onPressed: () {
+                            _selectCameraImage();
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -113,160 +167,65 @@ class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
                 children: [
                   BaseInput(
                     onChanged: (value) {
-                      businessName = value;
+                      name = value;
                     },
-                    hintText: 'Business Name',
-                    type: 'name',
+                    hintText: 'Store Name',
+                    type: 'Store Name',
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   BaseInput(
                     onChanged: (value) {
-                      phoneNumber = value;
+                      print(value);
+                      address = value;
                     },
-                    hintText: 'Phone Number',
-                    type: 'number',
+                    initialValue: currentAddress,
+                    hintText: 'Address',
+                    type: 'Address',
                   ),
                   const SizedBox(
                     height: 10,
                   ),
-                  CSCPicker(
-                    showStates: true,
-                    showCities: true,
-
-                    ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
-                    flagState: CountryFlag.DISABLE,
-
-                    ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
-                    dropdownDecoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        color: Colors.white,
-                        border:
-                            Border.all(color: Colors.grey.shade300, width: 1)),
-
-                    ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
-                    disabledDropdownDecoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: GetSize.getWidth(context) * .4,
+                        child: BaseInput(
+                          onChanged: (value) {
+                            timeOpen = value;
+                          },
+                          hintText: 'Time Open',
+                          type: 'Time Open',
+                        ),
                       ),
-                      color: Colors.grey.shade300,
-                      border: Border.all(color: Colors.grey.shade300, width: 1),
-                    ),
-
-                    ///placeholders for dropdown search field
-                    countrySearchPlaceholder: "Country",
-                    stateSearchPlaceholder: "State",
-                    citySearchPlaceholder: "City",
-
-                    ///labels for dropdown
-                    countryDropdownLabel: "Country",
-                    stateDropdownLabel: "State",
-                    cityDropdownLabel: "City",
-
-                    ///Default Country
-                    ///defaultCountry: CscCountry.India,
-
-                    ///Country Filter [OPTIONAL PARAMETER]
-                    countryFilter: const [
-                      CscCountry.Vietnam
+                      SizedBox(
+                        width: GetSize.getWidth(context) * .4,
+                        child: BaseInput(
+                          onChanged: (value) {
+                            timeClose = value;
+                          },
+                          hintText: 'Time Close',
+                          type: 'Time Close',
+                        ),
+                      )
                     ],
-
-                    ///Disable country dropdown (Note: use it with default country)
-                    //disableCountry: true,
-
-                    ///selected item style [OPTIONAL PARAMETER]
-                    selectedItemStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-
-                    ///DropdownDialog Heading style [OPTIONAL PARAMETER]
-                    dropdownHeadingStyle: TextStyle(
-                        color: Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold),
-
-                    ///DropdownDialog Item style [OPTIONAL PARAMETER]
-                    dropdownItemStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),
-
-                    ///Dialog box radius [OPTIONAL PARAMETER]
-                    dropdownDialogRadius: 10.0,
-
-                    ///Search bar radius [OPTIONAL PARAMETER]
-                    searchBarRadius: 10.0,
-
-                    ///triggers once country selected in dropdown
-                    onCountryChanged: (value) {
-                      setState(() {
-                        ///store value in country variable
-                        countryValue = value;
-                      });
-                    },
-
-                    ///triggers once state selected in dropdown
-                    onStateChanged: (value) {
-                      setState(() {
-                        ///store value in state variable
-                        //stateValue = value;
-                      });
-                    },
-
-                    ///triggers once city selected in dropdown
-                    onCityChanged: (value) {
-                      setState(() {
-                        ///store value in city variable
-                        //cityValue = value;
-                      });
-                    },
-
-                    ///Show only specific countries using country filter
-                    // countryFilter: ["United States", "Canada", "Mexico"],
                   ),
-
-                  ///print newly selected country state and city in Text Widget
-                  TextButton(
-                      onPressed: () {
-                        setState(() {
-                          //address = "$cityValue, $stateValue, $countryValue";
-                        });
-                      },
-                      child: Text("Print Data")),
-                  //Text(address)
-
-                  // Padding(
-                  //   padding: const EdgeInsets.all(14),
-                  //   child: SelectState(
-                  //     onCountryChanged: (value) {
-                  //       setState(() {
-                  //         countryValue = value;
-                  //       });
-                  //     },
-                  //     onStateChanged: (value) {
-                  //       setState(() {
-                  //         stateValue = value;
-                  //       });
-                  //     },
-                  //     onCityChanged: (value) {
-                  //       setState(() {
-                  //         cityValue = value;
-                  //       });
-                  //     },
-                  //   ),
-                  // )
                   const SizedBox(
                     height: 30,
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
-                      onPressed: () async{
-                        AuthController auth = AuthController();
-                        await auth.registerStore("storeName", "address", _image, "timeOpen", "timeClose", "", "");
+                      onPressed: () async {
+                        if (locationAvailable) {
+                          EasyLoading.show(status: "Please wait");
+                          AuthController auth = AuthController();
+                          await auth.registerStore(name, address, _image, timeOpen, timeClose, "${_currentLocation?.latitude}", "${_currentLocation?.longitude}");
+                          EasyLoading.dismiss();
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                        }
                         //_registerStoreVendor();
                         //FirebaseAuth.instance.signOut();
                       },
@@ -294,6 +253,8 @@ class _RegisterStoreScreenState extends State<RegisterStoreScreen> {
           ),
         ],
       ),
+    ) : const Center(
+      child: Text("Waiting for get location"),
     );
   }
 }

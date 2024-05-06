@@ -1,15 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ddnangcao_project/utils/global_variable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as https;
 import '../../../api_services.dart';
-import '../../../providers/user_provider.dart';
 import 'i_auth.dart';
 
 class AuthController implements IAuth {
@@ -17,8 +13,8 @@ class AuthController implements IAuth {
   ApiServiceImpl apiServiceImpl = ApiServiceImpl();
 
   @override
-  Future<String> loginUser(
-      String email, String password, BuildContext context) async {
+  Future<String> loginUser(String email, String password,
+      BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     late String resMessage;
     final response = await apiServiceImpl.post(
@@ -26,23 +22,48 @@ class AuthController implements IAuth {
         params: {'email': email, 'password': password},
         needTokenAndUserId: false);
     final Map<String, dynamic> data = jsonDecode(response.body);
-    resMessage = data["message"];
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 &&
+        data['metadata']['user']['role'] == "vendor" && data['metadata']['user']['status'] == "active") {
+      resMessage = data["message"];
       String accessToken = data['metadata']['tokens']['accessToken'].toString();
       String refreshToken =
-          data['metadata']['tokens']['refreshToken'].toString();
+      data['metadata']['tokens']['refreshToken'].toString();
       String userId = data['metadata']['user']['_id'].toString();
       String name = data['metadata']['user']['name'].toString();
       String email = data['metadata']['user']['email'].toString();
+      List<dynamic> stores = data['metadata']['user']['stores'];
+
+      List<String> storeIds = stores.map<String>((store) =>
+          store['_id'].toString()).toList();
+
       await prefs.setString('accessToken', accessToken);
       await prefs.setString("refreshToken", refreshToken);
       await prefs.setString("userId", userId);
       await prefs.setString("name", name);
       await prefs.setString("email", email);
-      Provider.of<UserProvider>(context, listen: false)
-          .setUser(data['metadata']['user']);
-    } else {
-      return resMessage;
+      await prefs.setStringList("storeId", storeIds);
+    } else if(data['metadata']['user']['status'] == "pending"){
+      resMessage = GlobalVariable.waitingAdminApprove;
+      String accessToken = data['metadata']['tokens']['accessToken'].toString();
+      String refreshToken =
+      data['metadata']['tokens']['refreshToken'].toString();
+      String userId = data['metadata']['user']['_id'].toString();
+      String name = data['metadata']['user']['name'].toString();
+      String email = data['metadata']['user']['email'].toString();
+      List<dynamic> stores = data['metadata']['user']['stores'];
+
+      List<String> storeIds = stores.map<String>((store) =>
+          store['_id'].toString()).toList();
+
+      await prefs.setString('accessToken', accessToken);
+      await prefs.setString("refreshToken", refreshToken);
+      await prefs.setString("userId", userId);
+      await prefs.setString("name", name);
+      await prefs.setString("email", email);
+      await prefs.setStringList("storeId", storeIds);
+    }
+    else {
+      return "Incorrect Email or Password!";
     }
     return resMessage;
   }
@@ -66,23 +87,6 @@ class AuthController implements IAuth {
     final Map<String, dynamic> data = jsonDecode(response.body);
     message = data["message"];
     return message;
-  }
-
-  Future<void> getUserData(context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var userProvider = Provider.of<UserProvider>(context, listen: false);
-    String userId = prefs.getString("userId") ?? "";
-    String email = prefs.getString("email") ?? "";
-    String name = prefs.getString("name") ?? "";
-    String accessToken = prefs.getString("accessToken") ?? "";
-    String refreshToken = prefs.getString("refreshToken") ?? "";
-    // UserModel user = UserModel(
-    //     id: userId,
-    //     name: name,
-    //     email: email,
-    //     accessToken: accessToken,
-    //     refreshToken: refreshToken);
-    // userProvider.setUserFromModel(user);
   }
 
   @override
@@ -119,8 +123,8 @@ class AuthController implements IAuth {
   }
 
   @override
-  Future<String> verifySignUp(
-      String email, String otp, BuildContext context) async {
+  Future<String> verifySignUp(String email, String otp,
+      BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     late String resMessage;
 
@@ -134,7 +138,7 @@ class AuthController implements IAuth {
     if (response.statusCode == 201) {
       String accessToken = data['metadata']['tokens']['accessToken'].toString();
       String refreshToken =
-          data['metadata']['tokens']['refreshToken'].toString();
+      data['metadata']['tokens']['refreshToken'].toString();
       String userId = data['metadata']['user']['_id'].toString();
       String name = data['metadata']['user']['name'].toString();
       String email = data['metadata']['user']['email'].toString();
@@ -143,8 +147,7 @@ class AuthController implements IAuth {
       await prefs.setString("userId", userId);
       await prefs.setString("name", name);
       await prefs.setString("email", email);
-      Provider.of<UserProvider>(context, listen: false)
-          .setUser(data['metadata']['user']);
+
     } else {
       return resMessage;
     }
@@ -152,8 +155,8 @@ class AuthController implements IAuth {
   }
 
   @override
-  Future<String> resetPass(
-      String password, String passwordConfirm, String token) async {
+  Future<String> resetPass(String password, String passwordConfirm,
+      String token) async {
     late String resMessage;
     final response = await apiServiceImpl.post(
         url: token,
@@ -168,8 +171,8 @@ class AuthController implements IAuth {
   //chat
   //create new user
   @override
-  Future<UserCredential> signUpWithEmailAndPass(
-      String email, String password, String userId) async {
+  Future<UserCredential> signUpWithEmailAndPass(String email, String password,
+      String userId) async {
     final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     try {
@@ -188,8 +191,8 @@ class AuthController implements IAuth {
   }
 
   @override
-  Future<UserCredential> signInWithEmailAndPass(
-      String email, String password) async {
+  Future<UserCredential> signInWithEmailAndPass(String email,
+      String password) async {
     final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
     final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
     try {
@@ -206,37 +209,24 @@ class AuthController implements IAuth {
   }
 
   @override
-  Future<String> registerStore(
-    String storeName,
-    String address,
-    File? image,
-    String timeOpen,
-    String timeClose,
-    String latitude,
-      String longtitude,
-  ) async {
-    String message;
-    var stream = https.ByteStream(image!.openRead());
-    var length = await image.length();
-    stream.cast();
-    var request = https.MultipartRequest(
-        "POST", Uri.parse("http://localhost:8000/api/v1/store"));
-    request.fields['name'] = storeName;
-    request.fields['address'] = address;
-    var multipart = https.MultipartFile('image', stream, length);
-    request.files.add(multipart);
-    request.fields['time_open'] = timeOpen;
-    request.fields['time_close'] = timeClose;
-    request.fields['longtitude'] = longtitude;
-    request.fields['latitude'] = latitude;
-    var response = await request.send();
-    var body = await https.Response.fromStream(response);
-
-    print(body.body);
-    if(response.statusCode == 200){
-      print("Create store success");
-      message = "Success";
-    }
-    return "Success";
+  Future<void> registerStore(String storeName,
+      String address,
+      File? image,
+      String timeOpen,
+      String timeClose,
+      String latitude,
+      String longtitude,) async {
+    final response = await apiServiceImpl.postFormData(url: "store",
+        params: {"name": storeName,
+          "address": address,
+          "image": image,
+          "time_open": timeOpen,
+          "time_close": timeClose,
+          "longtitude": longtitude,
+          "latitude": latitude
+        },
+        nameFieldImage: "image");
+    final Map<String, dynamic> data = jsonDecode(response.body);
+    print(data);
   }
 }

@@ -7,6 +7,8 @@ class BaseInput extends StatefulWidget {
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
   final bool? isPass;
+  final String? initialValue;
+  final bool? isNumberType;
 
   const BaseInput(
       {super.key,
@@ -14,6 +16,8 @@ class BaseInput extends StatefulWidget {
       required this.hintText,
       this.onChanged,
       this.validator,
+        this.initialValue,
+        this.isNumberType = false,
       this.isPass = false});
 
   @override
@@ -21,7 +25,7 @@ class BaseInput extends StatefulWidget {
 }
 
 class _BaseInputState extends State<BaseInput> {
-  bool isHiddenPass = false;
+  bool isHiddenPass = true;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +40,9 @@ class _BaseInputState extends State<BaseInput> {
           obscureText: widget.isPass == true ? isHiddenPass : false,
           onChanged: widget.onChanged,
           validator: widget.validator,
+          keyboardType: widget.isNumberType == true ? TextInputType.number : null,
+          initialValue: widget.initialValue,
+
           decoration: InputDecoration(
             suffixIcon: widget.isPass == true
                 ? GestureDetector(

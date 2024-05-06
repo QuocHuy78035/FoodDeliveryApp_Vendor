@@ -71,4 +71,20 @@ class MenuController implements IMenuController {
     print(data);
     return data['status'];
   }
+
+  @override
+  Future<int> createStore(String name, String address, File image, String timeOpen, String timeClose, double latitude, double longtitude) async{
+    final response = await apiService.postFormData(url: "store", params: {
+      "name" : name,
+      "address" : address,
+      "image" : image,
+      "time_open" : timeOpen,
+      "time_close" : timeClose,
+      "latitude" : latitude,
+      "longtitude" : longtitude
+    }, nameFieldImage: "image");
+    final Map<String, dynamic> data = jsonDecode(response.body);
+    print(data);
+    return data['status'];
+  }
 }
