@@ -6,6 +6,7 @@ import '../../../providers/restaurant_provider.dart';
 import '../../../utils/size_lib.dart';
 import '../../../widgets/loading_widget.dart';
 import '../../statistic/views/statistic_screen.dart';
+import 'edit_res_screen.dart';
 
 class AllStoreScreen extends StatefulWidget {
   const AllStoreScreen({super.key});
@@ -84,12 +85,14 @@ class _AllStoreScreenState extends State<AllStoreScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                         BarChartSample3(storeId: value.storeModel[index].id ?? "",),
+                                    builder: (context) => BarChartSample3(
+                                      storeId: value.storeModel[index].id ?? "",
+                                    ),
                                   ),
                                 );
                               },
                               child: Restaurant(
+                                id: value.storeModel[index].id ?? "",
                                 name: value.storeModel[index].name ?? '',
                                 rating:
                                     value.storeModel[index].rating.toString(),
@@ -117,6 +120,7 @@ class _AllStoreScreenState extends State<AllStoreScreen> {
 }
 
 class Restaurant extends StatelessWidget {
+  final String id;
   final String name;
   final String rating;
   final String address;
@@ -126,6 +130,7 @@ class Restaurant extends StatelessWidget {
 
   const Restaurant(
       {super.key,
+      required this.id,
       required this.name,
       required this.rating,
       required this.address,
@@ -188,14 +193,45 @@ class Restaurant extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: GetSize.getWidth(context) * 0.9,
-                          child: Text(
-                            name,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: GetSize.getWidth(context) * 0.64,
+                              child: Text(
+                                name,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            PopupMenuButton(
+                              onSelected: (value) {
+                                if (value == "1") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditResScreen(
+                                        id: id,
+                                        name: name,
+                                        timeOpen: timeOpen,
+                                        timeClose: timeClode,
+                                        image: image,
+                                        address: address,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              itemBuilder: (BuildContext context) {
+                                return [
+                                  const PopupMenuItem(
+                                    value: "1",
+                                    child: Text("Edit"),
+                                  ),
+                                ];
+                              },
+                            )
+                          ],
                         ),
                         SizedBox(
                           width: GetSize.getWidth(context) * 0.9,
