@@ -17,7 +17,6 @@ abstract class ApiService {
 }
 
 class ApiServiceImpl extends ApiService {
-  
 
   @override
   post(

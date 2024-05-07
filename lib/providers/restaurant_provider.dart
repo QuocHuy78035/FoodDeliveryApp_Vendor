@@ -12,7 +12,7 @@ class RestaurantProvider extends ChangeNotifier{
       isLoading = true;
       storeModel = await restaurantController.findAllStoreByVendor();
     }catch(e){
-      throw Exception(e.toString);
+      throw Exception(e);
     }finally{
       isLoading = false;
       notifyListeners();

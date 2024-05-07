@@ -1,5 +1,5 @@
 class GlobalVariable{
-  static const String apiUrl = "http://192.168.1.7:8000/api/v1";
+  static const String apiUrl = "http://192.168.1.8:8000/api/v1";
   static const String emailValidator = "Email not valid";
   static const String passValidator = "Password required than 8 character";
   static const String fillAllField = "Please fill all field";
@@ -26,4 +26,5 @@ class GlobalVariable{
   static const String checkFavouriteSuc = "Check food is favorite successfully!";
   static const String deleteFavouriteSuc = "Delete favorite foods successfully!";
   static const String deleteFavouriteResSuc = "Delete favorite stores successfully!";
+
 }
