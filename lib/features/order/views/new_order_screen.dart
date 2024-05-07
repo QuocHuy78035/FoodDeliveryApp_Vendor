@@ -3,8 +3,9 @@ import 'package:ddnangcao_project/providers/order_provider.dart';
 import 'package:ddnangcao_project/utils/size_lib.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utils/color_lib.dart';
 import 'package:intl/intl.dart';
+
+import '../widgets/order_items.dart';
 
 class NewOrderScreen extends StatefulWidget {
   const NewOrderScreen({super.key});
@@ -50,33 +51,39 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return DetailOrderScreen(
-                                  address:  value.listOrderNewed[index].shippingAddress ?? "",
+                                  isOutGoing: true,
                                   index: index,
+                                  foodCost: value.listOrderNewed[index].checkout?.totalPrice,
+                                  phone: value.listOrderNewed[index].phoneNumber,
                                   foods: value.listOrderNewed[index].foods ?? [],
-                                  avt: "",
+                                  avt: value.listOrderNewed[index].user?.avt ?? "",
+                                  note: value.listOrderNewed[index].note,
                                   userName: value.listOrderNewed[index].user?.userName ?? "",
                                   subTotal: "${value.listOrderNewed[index].checkout
-                                      ?.totalApplyDiscount}",
+                                      ?.total}",
                                   distance: value.listOrderNewed[index].distance ?? "",
                                   id: value.listOrderNewed[index].sId ?? "",
                                   quantity: value.listOrderNewed[index].foods
                                   !.map((food) => food.quantity as int)
-                                      .toList(),
+                                      .toList(), address: value.listOrderNewed[index].shippingAddress ?? "",
                                 );
                               },
                             ),
                           );
                         },
                         child: OrderItem(
+                          status: "Shipper is arriving",
                           dished: value.listOrderNewed[index].foods!.length,
                           totalApplyDiscount:
                           NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
                               .format(value.listOrderNewed[index].checkout
-                              ?.totalApplyDiscount),
+                              ?.totalPrice),
                           name:
                           value.listOrderNewed[index].user?.userName ?? "",
-
-                        ),
+                          distance: value.listOrderNewed[index].distance ?? "",
+                          pickUp: value.listOrderNewed[index].updatedAt ?? "",
+                          createdAt: value.listOrderNewed[index].sId ?? "",
+                        )
                       );
                     },
                   ),
@@ -90,60 +97,3 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   }
 }
 
-class OrderItem extends StatelessWidget {
-  final String name;
-  final String totalApplyDiscount;
-  final int dished;
-  const OrderItem(
-      {super.key,
-        required this.name,
-        required this.totalApplyDiscount,
-        required this.dished});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black26.withOpacity(.05),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: GetSize.symmetricPadding * 2),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              name,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-            ),
-            const Divider(
-              color: Colors.black,
-            ),
-            const Row(
-              children: [
-                Text("Status: "),
-                Text("Driver is arriving", style: TextStyle(fontSize: 18, color: Colors.orange),)
-              ],
-            ),
-            Row(
-              children: [
-                Text("$dished dished"),
-                Text(
-                  totalApplyDiscount,
-                  style: const TextStyle(
-                      color: ColorLib.primaryColor, fontSize: 18),
-                )
-              ],
-            ),
-            Container(
-              height: 20,
-              width: GetSize.getWidth(context),
-              color: Colors.grey,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}

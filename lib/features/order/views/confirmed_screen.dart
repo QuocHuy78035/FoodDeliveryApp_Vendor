@@ -52,7 +52,7 @@ class _ConfirmedScreenState extends State<ConfirmedScreen> {
                               builder: (context) {
                                 return DetailOrderScreen(
                                   index: index,
-                                  foodCost: value.listOrderConfirmed[index].checkout?.total,
+                                  foodCost: value.listOrderConfirmed[index].checkout?.totalPrice,
                                   phone: value.listOrderConfirmed[index].phoneNumber,
                                   foods: value.listOrderConfirmed[index].foods ?? [],
                                   avt: value.listOrderConfirmed[index].user?.avt ?? "",
@@ -71,18 +71,17 @@ class _ConfirmedScreenState extends State<ConfirmedScreen> {
                           );
                         },
                         child: OrderItem(
-                          status: "Waiting for shipper pickup",
+                          status: "Waiting for shipper confirm",
                           dished: value.listOrderConfirmed[index].foods!.length,
                           totalApplyDiscount:
                           NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
                               .format(value.listOrderConfirmed[index].checkout
-                              ?.total),
+                              ?.totalPrice),
                           name:
                           value.listOrderConfirmed[index].user?.userName ?? "",
                           distance: value.listOrderConfirmed[index].distance ?? "",
                           pickUp: value.listOrderConfirmed[index].updatedAt ?? "",
-                          createdAt: '',
-
+                          createdAt: value.listOrderNewed[index].sId ?? "",
                         ),
                       );
                     },

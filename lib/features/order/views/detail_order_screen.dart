@@ -21,6 +21,7 @@ class DetailOrderScreen extends StatefulWidget {
   final int index;
   final String? phone;
   final bool? isPending;
+  final bool? isOutGoing;
 
   const DetailOrderScreen(
       {Key? key,
@@ -36,6 +37,7 @@ class DetailOrderScreen extends StatefulWidget {
       required this.id,
       this.note,
         this.isPending = false,
+        this.isOutGoing = false,
       required this.index})
       : super(key: key);
 
@@ -318,13 +320,13 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
           ],
         ),
       ),
-      bottomSheet: widget.isPending == true ? BottomSheet(
+      bottomSheet: widget.isPending == true || widget.isOutGoing == true ? BottomSheet(
         onClosing: () {},
         builder: (BuildContext context) {
           return Container(
             color: Colors.white,
             height: 60,
-            child: Row(
+            child: widget.isPending == true ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
@@ -368,6 +370,24 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                   ),
                 ),
               ],
+            ) :  GestureDetector(
+              onTap: () async {
+                await Provider.of<OrderProvider>(context, listen: false)
+                    .changeStatusToConfirmed(
+                    widget.id, "outgoing", widget.index);
+                Navigator.pop(context);
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: ColorLib.primaryColor,
+                ),
+                child: const Center(
+                  child: Text(
+                    "Delivered to shipper",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ),
+              ),
             ),
           );
         },

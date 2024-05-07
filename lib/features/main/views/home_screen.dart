@@ -22,6 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 horizontal: GetSize.symmetricPadding * 2),
             child: Column(
               children: [
+                const SizedBox(
+                  height: 50,
+                ),
                 Image.asset("assets/images/banners/Banner_vendor.png"),
                 const SizedBox(
                   height: 50,
@@ -41,9 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Image.asset(
                             "assets/images/main/ic_order.png",
-                            height: 50,
+                            height: 100,
                           ),
-                          const Text("Orders")
+                          const Text("Orders", style: TextStyle(fontSize: 24),)
                         ],
                       ),
                     ),
@@ -63,9 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Image.asset(
                             "assets/images/main/ic_menu.png",
-                            height: 60,
+                            height: 110,
                           ),
-                          Text("Menus")
+                          const Text("Menus", style: TextStyle(fontSize: 24),)
                         ],
                       ),
                     )
@@ -160,7 +163,7 @@ class Food extends StatelessWidget {
                             const SizedBox(
                               width: 10,
                             ),
-                            Text("€3,00")
+                            const Text("€3,00")
                           ],
                         ),
                         Row(
@@ -186,7 +189,7 @@ class Food extends StatelessWidget {
                             const SizedBox(
                               width: 10,
                             ),
-                            Text("4.5")
+                            const Text("4.5")
                           ],
                         )
                       ],

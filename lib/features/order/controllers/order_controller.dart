@@ -11,7 +11,6 @@ class OrderController implements IOrder{
     List<Orders> listOrderPending = [];
     final response = await apiServiceImpl.get(url: "order/vendor?status=$status&sort=createdAt");
     final Map<String, dynamic> data = jsonDecode(response.body);
-    print(data);
     if(data['status'] == 200){
       final List<dynamic> ordersData = data['metadata']['orders'];
       listOrderPending = ordersData.map((orderJson) => Orders.fromJson(orderJson)).toList();

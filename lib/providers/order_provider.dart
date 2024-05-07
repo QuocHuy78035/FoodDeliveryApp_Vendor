@@ -6,9 +6,22 @@ import '../models/order.dart';
 class OrderProvider extends ChangeNotifier{
   late List<Orders> listOrderScheduled = [];
   late List<Orders> listOrderConfirmed = [];
+  late List<Orders> listOrderOutGoing = [];
   late List<Orders> listOrderNewed = [];
   late bool isLoading = false;
   final OrderController orderController = OrderController();
+
+  void getAllOrderOutGoing() async {
+    isLoading = true;
+    try{
+      listOrderOutGoing = await orderController.getAllOrders("outgoing");
+    }catch(e){
+      print("fail to get all order outgoing provider");
+    }finally{
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 
   void getAllOrderPending() async {
     isLoading = true;
@@ -51,6 +64,21 @@ class OrderProvider extends ChangeNotifier{
       await orderController.updatedStatusOrder(orderId, status);
       if(status == "confirmed"){
         listOrderScheduled.removeAt(index);
+      }
+    }catch(e){
+      print("Fail to change status");
+      throw Exception(e.toString());
+    }finally{
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  changeStatusToOutGoing(String orderId, String status, int index) async{
+    try{
+      await orderController.updatedStatusOrder(orderId, status);
+      if(status == "outgoing"){
+        listOrderNewed.removeAt(index);
       }
     }catch(e){
       print("Fail to change status");
