@@ -58,12 +58,12 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
 
   getCommision() {
     final int subTotal = int.parse(widget.subTotal);
-    commision = (subTotal / 10).floor();
+    commision = (widget.foodCost ?? 0 / 10).floor();
   }
 
   getTotalMerchantGet() {
     int subTotal = int.parse(widget.subTotal);
-    totalMerchantGet = subTotal - commision;
+    totalMerchantGet = widget.foodCost ?? 0 - commision;
   }
 
   getHeight() {
@@ -207,46 +207,46 @@ class _DetailOrderScreenState extends State<DetailOrderScreen> {
                       )
                     ],
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Subtotal (Origin Price)",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
-                            .format(subTotal),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Commision (10%)",
-                        style: TextStyle(
-                          fontSize: 17,
-                        ),
-                      ),
-                      Text(
-                        NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
-                            .format(commision),
-                        style: const TextStyle(fontSize: 17),
-                      ),
-                    ],
-                  ),
+                  // const SizedBox(
+                  //   height: 10,
+                  // ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     const Text(
+                  //       "Subtotal (Origin Price)",
+                  //       style: TextStyle(
+                  //         fontSize: 18,
+                  //         fontWeight: FontWeight.w600,
+                  //       ),
+                  //     ),
+                  //     Text(
+                  //       NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
+                  //           .format(subTotal),
+                  //       style: const TextStyle(
+                  //         fontSize: 18,
+                  //         fontWeight: FontWeight.w600,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // const SizedBox(height: 10),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     const Text(
+                  //       "Commision (10%)",
+                  //       style: TextStyle(
+                  //         fontSize: 17,
+                  //       ),
+                  //     ),
+                  //     Text(
+                  //       NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
+                  //           .format(commision),
+                  //       style: const TextStyle(fontSize: 17),
+                  //     ),
+                  //   ],
+                  // ),
                   const SizedBox(height: 40),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
