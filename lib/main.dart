@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await apiServiceImpl.getNewToken();
     setState(() {
-      accessToken = sharedPreferences.getString("accessToken") ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWViZjk1MGJlNzBmOGQ2MzQxMzZjNmYiLCJlbWFpbCI6ImJ1aWR1Y2xvbmc5MTFAZ21haWwuY29tIiwicm9sZSI6InZlbmRvciIsImlhdCI6MTcxNTA2MjI4OCwiZXhwIjoxNzIyMjYyMjg4fQ.idt7mDNIPnEzPmE1gWAsGOn2Cx4-vVxXh2TgQ5_rINI";
+      accessToken = sharedPreferences.getString("accessToken") ?? "";
     });
   }
 
@@ -76,7 +76,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    print(accessToken);
     return accessToken != '' ? MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
@@ -87,7 +86,7 @@ class _MyAppState extends State<MyApp> {
       builder: EasyLoading.init(),
         home: JwtDecoder.isExpired(accessToken) == false  ? const CustomerHomeScreen() : const LoginScreen() ,
       //home: RegisterStoreScreen(email: '',),
-    ) : MaterialApp(
+    ) : const MaterialApp(
       home: Scaffold(
         body: Center(
           child: Text("Waiting"),

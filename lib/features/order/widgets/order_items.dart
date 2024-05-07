@@ -42,7 +42,7 @@ class OrderItem extends StatelessWidget {
             Text(
               status ?? "",
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 20,
                 color: ColorLib.primaryColor,
               ),
             ),

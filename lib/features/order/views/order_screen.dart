@@ -1,5 +1,6 @@
 import 'package:ddnangcao_project/features/order/views/confirmed_screen.dart';
 import 'package:ddnangcao_project/features/order/views/new_order_screen.dart';
+import 'package:ddnangcao_project/features/order/views/out_going_order_screen.dart';
 import 'package:ddnangcao_project/features/order/views/scheduled_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/color_lib.dart';
@@ -47,9 +48,7 @@ class _OrderScreenState extends State<OrderScreen> {
             ScheduledScreen(),
             ConfirmedScreen(),
             NewOrderScreen(),
-            Center(
-              child: Text("Shoes"),
-            ),
+            OutGoingOrderScreen()
           ],
         ),
       ),
