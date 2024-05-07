@@ -60,7 +60,7 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
                                   avt: value.listOrderScheduled[index].user?.avt ?? "",
                                   userName: value.listOrderScheduled[index].user?.userName ?? "",
                                   subTotal: "${value.listOrderScheduled[index].checkout
-                                      ?.total}",
+                                      ?.totalPrice}",
                                   distance: value.listOrderScheduled[index].distance ?? "",
                                   id: value.listOrderScheduled[index].sId ?? "",
                                   quantity: value.listOrderScheduled[index].foods
@@ -80,7 +80,7 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
                           totalApplyDiscount:
                           NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
                               .format(value.listOrderScheduled[index].checkout
-                              ?.total),
+                              ?.totalPrice),
                           name:
                           value.listOrderScheduled[index].user?.userName ?? "",
                           pickUp: DateFormat.Hm().format(
