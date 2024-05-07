@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/restaurant_provider.dart';
 import '../../../utils/size_lib.dart';
 import '../../../widgets/loading_widget.dart';
+import '../../statistic/views/statistic_screen.dart';
 
 class AllStoreScreen extends StatefulWidget {
   const AllStoreScreen({super.key});
@@ -72,19 +73,26 @@ class _AllStoreScreenState extends State<AllStoreScreen> {
                       );
                     } else {
                       return Container(
-                        height: GetSize.getHeight(context)*.8,
+                        height: GetSize.getHeight(context) * .8,
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: ListView.builder(
                           shrinkWrap: true,
                           itemCount: value.storeModel.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                         BarChartSample3(storeId: value.storeModel[index].id ?? "",),
+                                  ),
+                                );
+                              },
                               child: Restaurant(
                                 name: value.storeModel[index].name ?? '',
                                 rating:
-                                    value.storeModel[index].rating.toString() ??
-                                        "",
+                                    value.storeModel[index].rating.toString(),
                                 address: value.storeModel[index].address ?? "",
                                 image: value.storeModel[index].image ?? '',
                                 timeOpen:
@@ -239,7 +247,7 @@ class Restaurant extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          height:30,
+          height: 30,
         )
       ],
     );
