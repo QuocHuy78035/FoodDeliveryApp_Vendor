@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ddnangcao_project/features/restaurants/controllers/res_controller.dart';
 import 'package:ddnangcao_project/models/store.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,5 +19,21 @@ class RestaurantProvider extends ChangeNotifier{
       isLoading = false;
       notifyListeners();
     }
+  }
+
+
+  editRes(
+      String resId,
+      String storeName,
+      String timeOpen,
+      String timeClose,
+      File image,
+      ) async {
+    try {
+      await restaurantController.editRes(
+          resId, storeName, timeOpen, timeClose, image);
+    } catch (e) {
+      throw Exception(e.toString());
+    } finally {}
   }
 }

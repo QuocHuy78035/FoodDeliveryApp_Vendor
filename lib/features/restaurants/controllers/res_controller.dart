@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:ddnangcao_project/api_services.dart';
 import 'package:ddnangcao_project/features/restaurants/controllers/i_res.dart';
@@ -17,5 +18,18 @@ class RestaurantController implements IRestaurant{
     } else {
       throw Exception('Failed to load stores');
     }
+  }
+
+  @override
+  Future<int> editRes(String storeId, String resName, String timeOpen, String timeClose, File? file) async{
+    final response = await apiService.patchFormData(url: "store/$storeId", params: {
+      "name" : resName,
+      "time_open" : timeOpen,
+      "time_close" : timeClose,
+      "image" : file
+    }, nameFieldImage: 'image');
+    final Map<String, dynamic> data = jsonDecode(response.body);
+    print(data);
+    return data['status'];
   }
 }

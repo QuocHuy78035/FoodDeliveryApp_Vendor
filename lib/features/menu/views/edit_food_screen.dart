@@ -289,11 +289,6 @@ class _EditFoodScreenState extends State<EditFoodScreen> {
                   )
                 ],
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    //Provider.of<AddFoodProvider>(context, listen: false).addFood(foodName, cateId, "65aa9f6c56ab9f71f999e895", price, quantity, _image!);
-                  },
-                  child: Text("Up load"))
             ],
           ),
         ),
