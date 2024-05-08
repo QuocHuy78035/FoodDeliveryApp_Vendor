@@ -39,7 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
 
       String message = await authController.registerUser(
-          name, email, password, passwordConfirm);
+          name, email, password, passwordConfirm, mobilePhone);
       if (message == GlobalVariable.optSend) {
         Navigator.push(
           context,

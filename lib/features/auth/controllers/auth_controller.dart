@@ -54,6 +54,7 @@ class AuthController implements IAuth {
       String userId = data['metadata']['user']['_id'].toString();
       String name = data['metadata']['user']['name'].toString();
       String email = data['metadata']['user']['email'].toString();
+
       List<dynamic> stores = data['metadata']['user']['stores'];
 
       List<String> storeIds = stores.map<String>((store) =>
@@ -74,7 +75,7 @@ class AuthController implements IAuth {
 
   @override
   Future<String> registerUser(String name, String email, String password,
-      String passwordConfirm) async {
+      String passwordConfirm, String mobile) async {
     late String message;
 
     final response = await apiServiceImpl.post(
@@ -84,6 +85,7 @@ class AuthController implements IAuth {
           "email": email,
           "password": password,
           "passwordConfirm": passwordConfirm,
+          "mobile": mobile,
           "role": "vendor"
         },
         needTokenAndUserId: false);
@@ -220,6 +222,7 @@ class AuthController implements IAuth {
       String timeClose,
       String latitude,
       String longtitude,) async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final response = await apiServiceImpl.postFormData(url: "store",
         params: {"name": storeName,
           "address": address,
@@ -231,6 +234,9 @@ class AuthController implements IAuth {
         },
         nameFieldImage: "image");
     final Map<String, dynamic> data = jsonDecode(response.body);
+    String storeId = data['metadata']['_id'].toString();
+    await sharedPreferences.setString("resId", storeId);
+    print("storeId $storeId");
     print(data);
   }
 }

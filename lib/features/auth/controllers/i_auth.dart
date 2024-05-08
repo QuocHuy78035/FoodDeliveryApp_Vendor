@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 
 abstract class IAuth{
   Future<String> loginUser(String email, String password, BuildContext context);
-  Future<String> registerUser(String name, String email, String password, String passwordConfirm);
+  Future<String> registerUser(String name, String email, String password, String passwordConfirm, String mobile);
   Future<int> forgotPass(String email);
   Future<List<String>> verifyForgotPass(String email, String otp);
   Future<String> verifySignUp(String email, String otp, BuildContext context);

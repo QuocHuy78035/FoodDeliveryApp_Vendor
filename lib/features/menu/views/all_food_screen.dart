@@ -5,6 +5,7 @@ import 'package:ddnangcao_project/providers/menu_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../utils/color_lib.dart';
 import '../../../utils/size_lib.dart';
@@ -18,16 +19,32 @@ class AllFoodScreen extends StatefulWidget {
 }
 
 class _AllFoodScreenState extends State<AllFoodScreen> {
+  String storeId = "";
+
+  getStoreId() async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    setState(() {
+      storeId = sharedPreferences.getString("resId") ?? "";
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
-    Provider.of<MenuProvider>(context, listen: false)
-        .getAllFoodByStoreId("65aa9f6c56ab9f71f999e895");
+    getStoreId().then((_) {
+      Provider.of<MenuProvider>(context, listen: false)
+          .getAllFoodByStoreId(storeId);
+    });
+    // getStoreId();
+    // Provider.of<MenuProvider>(context, listen: false)
+    //     .getAllFoodByStoreId(storeId);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("123 ..$storeId");
     return Scaffold(
       appBar: AppBar(
         title: const Text("All Food"),
@@ -39,7 +56,9 @@ class _AllFoodScreenState extends State<AllFoodScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AddFoodScreen(),
+                      builder: (context) => AddFoodScreen(
+                        storeId: storeId,
+                      ),
                     ),
                   );
                 },
@@ -47,70 +66,77 @@ class _AllFoodScreenState extends State<AllFoodScreen> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Consumer<MenuProvider>(builder: (context, value, child) {
-              if (value.listFood.isEmpty) {
-                return const Center(
-                  child: Center(
-                    child: Text("No Have Item"),
+      body: storeId != ""
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 20,
                   ),
-                );
-              } else {
-                if (value.isLoading) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: GetSize.symmetricPadding * 2, vertical: 10),
-                    color: Colors.black12.withOpacity(0.05),
-                    height: GetSize.getHeight(context) * 0.85,
-                    width: GetSize.getWidth(context),
-                    child: ListView.separated(
-                      itemCount: value.listFood.length,
-                      itemBuilder: (context, index) => const NewsCardSkelton(),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 16),
-                    ),
-                  );
-                } else {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: GetSize.symmetricPadding * 2, vertical: 10),
-                    color: Colors.black12.withOpacity(0.05),
-                    height: GetSize.getHeight(context) * .9,
-                    width: GetSize.getWidth(context),
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 8,
-                              childAspectRatio: 2 / 3),
-                      itemCount: value.listFood.length,
-                      itemBuilder: (context, index) {
-                        return Food(
-                          image: value.listFood[index].image,
-                          cateId: value.listFood[index].category.id,
-                          left: value.listFood[index].left,
-                          foodId: value.listFood[index].id,
-                          sold: value.listFood[index].sold,
-                          name: value.listFood[index].name,
-                          price: value.listFood[index].price,
-                          rating: value.listFood[index].rating,
+                  Consumer<MenuProvider>(builder: (context, value, child) {
+                    if (value.listFood.isEmpty) {
+                      return const Center(
+                        child: Center(
+                          child: Text("No Have Item"),
+                        ),
+                      );
+                    } else {
+                      if (value.isLoading) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: GetSize.symmetricPadding * 2,
+                              vertical: 10),
+                          color: Colors.black12.withOpacity(0.05),
+                          height: GetSize.getHeight(context) * 0.85,
+                          width: GetSize.getWidth(context),
+                          child: ListView.separated(
+                            itemCount: value.listFood.length,
+                            itemBuilder: (context, index) =>
+                                const NewsCardSkelton(),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 16),
+                          ),
                         );
-                      },
-                    ),
-                  );
-                }
-              }
-            })
-          ],
-        ),
-      ),
+                      } else {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: GetSize.symmetricPadding * 2,
+                              vertical: 10),
+                          color: Colors.black12.withOpacity(0.05),
+                          height: GetSize.getHeight(context) * .9,
+                          width: GetSize.getWidth(context),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 8,
+                                    crossAxisSpacing: 8,
+                                    childAspectRatio: 2 / 3),
+                            itemCount: value.listFood.length,
+                            itemBuilder: (context, index) {
+                              return Food(
+                                image: value.listFood[index].image,
+                                cateId: value.listFood[index].category.id,
+                                left: value.listFood[index].left,
+                                foodId: value.listFood[index].id,
+                                sold: value.listFood[index].sold,
+                                name: value.listFood[index].name,
+                                price: value.listFood[index].price,
+                                rating: value.listFood[index].rating,
+                              );
+                            },
+                          ),
+                        );
+                      }
+                    }
+                  })
+                ],
+              ),
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }
