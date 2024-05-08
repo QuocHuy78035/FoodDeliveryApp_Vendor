@@ -58,7 +58,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String accessToken = '';
-
   getUserData() async{
     final ApiServiceImpl apiServiceImpl = ApiServiceImpl();
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -86,11 +85,16 @@ class _MyAppState extends State<MyApp> {
       builder: EasyLoading.init(),
         home: JwtDecoder.isExpired(accessToken) == false  ? const CustomerHomeScreen() : const LoginScreen() ,
       //home: RegisterStoreScreen(email: '',),
-    ) : const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text("Waiting"),
-        ),
+    ) : MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      builder: EasyLoading.init(),
+      home: const Scaffold(
+        body: LoginScreen(),
       ),
     );
   }
